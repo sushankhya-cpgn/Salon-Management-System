@@ -1,33 +1,44 @@
-version: '3.9'
-
 services:
-  db:
+  postgres:
     image: postgres:15
-    environment:
-      POSTGRES_USER: salon_user
-      POSTGRES_PASSWORD: salon_password
-      POSTGRES_DB: salon_db
-
+    hostname: postgres_db
+    container_name: postgres_db
+    restart: always
     ports:
-        - "5432:5432"
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    
-  backend:
-    build: .
-    command: npx tsx src/server.ts
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+    networks:
+      - prisma-network
+
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d postgres" ]
+      interval: 5s
+      timeout: 2s
+      retries: 20
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    stdin_open: true
+    tty: true
     depends_on:
-      - db
-    env_file:
-      - .env
-    volumes:
-      - .:/app
-      - /app/node_modules
-    working_dir: /app
+      postgres:
+        condition: service_healthy
+
+    env_file: .env
+    networks:
+      - prisma-network
+networks:
+  prisma-network:
+    name: prisma-network
 volumes:
-  db_data: 
-  
+  pgdata:
 
 
