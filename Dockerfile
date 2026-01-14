@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # RUN SCRIPT
-CMD ["npx","tsx","src/server.ts"]
+CMD ["npm","run","dev"]

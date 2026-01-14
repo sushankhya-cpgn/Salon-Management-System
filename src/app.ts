@@ -9,7 +9,7 @@ import type { Request, Response } from 'express';
 
 
 const app = express();
-app.use(cors());
+app.use(cors());  
 app.use(express.json());
 
 

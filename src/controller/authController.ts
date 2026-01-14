@@ -2,13 +2,14 @@ import type { Request, Response } from "express";
 import {prisma} from "../lib/prisma.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { sendEmail } from "../utils/sendMail.js";
 
 
 export const register = async function (req: Request, res: Response) {
     try {
 
         //Check if User Already Exists
-        const user = await prisma.user.findFirst({
+        const user = await prisma.user.findUnique({
             where: {
                 email: req.body.email
             }
@@ -26,9 +27,12 @@ export const register = async function (req: Request, res: Response) {
             data: {
                 email: req.body.email,
                 password: hashedPassword,
-                name: req.body.name
+                name: req.body.name,
+                
             }
         });
+
+        sendEmail({email:"chapagain.sushankhya@gmail.com",subject:"AAaa",message:"AAA"})
 
         res.status(201).json({ message: "User registered successfully", user: { email: newUser.email, name: newUser.name } });
 
