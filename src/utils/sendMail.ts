@@ -8,15 +8,23 @@ interface emailType{
 
 export const sendEmail = async({email,subject,message}:emailType):Promise<void>=>{
     try{
+        if(!process.env.HOST || !process.env.PASS){
+            throw new Error('Missing SMTP credentials. Ensure HOST and PASS are set in environment variables.');
+        }
+
         const transporter = nodemailer.createTransport({
-            service: "gmail",
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true, // use TLS
             auth: {
                 user: process.env.HOST,
                 pass: process.env.PASS
-                
             }
-            
         })
+
+        // Verify connection configuration and surface auth/connectivity errors early
+        await transporter.verify()
+
         await transporter.sendMail({
             from: process.env.HOST,
             to: email,
@@ -25,7 +33,7 @@ export const sendEmail = async({email,subject,message}:emailType):Promise<void>=
         })
     }
     catch(error){
-        console.log(error);
-        throw(error);
+        console.error('sendEmail error:', (error as any)?.response || (error as any)?.message || error)
+        throw error;
     }
 }
