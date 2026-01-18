@@ -1,13 +1,13 @@
 import type { Request, Response } from "express";
 import { prisma } from "../lib/prisma.js";
 
-export const createAppointment = (req:Request,res:Response)=>{
+export const createAppointment = async(req:Request,res:Response)=>{
     try{
-        const {customerName,email,date,startTime,endTime,serviceId} = req.body;
-        if(!customerName || !date || !startTime || !endTime || !serviceId){
+        const {customerName,email,date,startTime,serviceId} = req.body;
+        if(!customerName || !date || !startTime || !serviceId){
             return res.status(400).json({message:"Missing required Fields"})
         }
-        const service = prisma.service.findUnique({
+        const service = await prisma.service.findUnique({
             where:{
                 id:Number(serviceId)
             }
@@ -17,16 +17,25 @@ export const createAppointment = (req:Request,res:Response)=>{
             return res.status(400).json({error:"Invalid Service"})
         }
 
-        prisma.appointment.create({
+        // watch this
+        const startAt = new Date(`${date}T${startTime}:00`)
+        const endAt = new Date(startAt.getTime() + service.duration * 60000);
+
+
+       const appointment =  await prisma.appointment.create({
             data:{
                 customerName: customerName,
-                email: email,
-                date: date,
-                startTime: startTime,
-                endTime:endTime,
-                serviceId:serviceId
+                email: email ?? null,
+                startTime: startAt,
+                serviceId:Number(serviceId),
+                endTime:endAt 
             }
         })
+
+        return res.status(201).json({
+      message: "Appointment created successfully",
+      appointment
+    });
 
     }
     
@@ -40,15 +49,14 @@ export const createAppointment = (req:Request,res:Response)=>{
 export const updateAppointment = async(req:Request,res:Response)=>{
     try{
         const {id} = req.params;
-        const {customerName,email,date,startTime,endTime,serviceId} = req.body;
+        const {customerName,email,date,startTime,serviceId} = req.body;
         const appointment = await prisma.appointment.update({
             where:{id:Number(id)},
             data:{
                 customerName: customerName,
-                email: email,
+                email: email ?? null,
                 date: date,
                 startTime: startTime,
-                endTime:endTime,
                 serviceId:serviceId
             }
         })
@@ -62,3 +70,4 @@ export const updateAppointment = async(req:Request,res:Response)=>{
         
     }
 }
+

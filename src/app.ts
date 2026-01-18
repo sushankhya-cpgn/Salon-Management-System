@@ -5,7 +5,9 @@ import swaggerUI from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
 import authRoutes from "./routes/authRoutes.js"
 import { rateLimit } from 'express-rate-limit';
+import appointmentRoutes from './routes/appointmentRoutes.js'
 import type { Request, Response } from 'express';
+
 
 
 const app = express();
@@ -46,11 +48,10 @@ const options = {
 
 const specs = swaggerJsDoc(options);
 
-
-
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs));
 
 app.use('/api/users', authRoutes);
+app.use('/api',appointmentRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello World!');
