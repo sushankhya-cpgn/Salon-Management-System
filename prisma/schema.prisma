@@ -26,5 +26,23 @@ model User {
   createdAt DateTime @default(now())
   lastLoginAt DateTime?
   role Role @default(USER)
+  verificationToken String?
 }
 
+model Service{
+  id Int @id @default(autoincrement())
+  name String @unique
+  duration Int
+  appointments Appointment[]
+}
+
+model Appointment{
+  id Int @id @default(autoincrement())
+  customerName String
+  email String?
+  startTime DateTime
+  endTime DateTime
+  serviceId Int
+  service Service @relation(fields:[serviceId],references:[id])
+  @@unique([serviceId,startTime]) // preventing two appointments at same starttime
+}

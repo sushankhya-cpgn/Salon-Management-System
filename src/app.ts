@@ -5,7 +5,13 @@ import swaggerUI from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
 import authRoutes from "./routes/authRoutes.js"
 import { rateLimit } from 'express-rate-limit';
+import appointmentRoutes from './routes/appointmentRoutes.js'
 import type { Request, Response } from 'express';
+import { fileURLToPath } from "url";
+import path from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 
 const app = express();
@@ -41,16 +47,15 @@ const options = {
       },
     ],
   },
-  apis: ['./routes/*.{ts,js}'], // Path to the API routes files
+  apis: [path.join(__dirname, './routes/*.{ts,js}')], // Path to the API routes files
 };
 
 const specs = swaggerJsDoc(options);
 
-
-
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs));
 
 app.use('/api/users', authRoutes);
+app.use('/api',appointmentRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello World!');
