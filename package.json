@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon --watch src --ext ts,js,json --exec \"tsx src/server.ts\"",
-    "db:deploy": "npx prisma migrate dev && npx prisma generate"
-    
+    "db:deploy": "npx prisma migrate dev && npx prisma generate",
+    "db:seed":"npx tsx prisma/seed.ts"
   },
   "repository": {
     "type": "git",

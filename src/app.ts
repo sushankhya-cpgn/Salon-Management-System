@@ -1,12 +1,13 @@
 
 import express from 'express';
+import type { Request, Response } from 'express';
+import authRoutes from "./routes/authRoutes.js"
+import appointmentRoutes from './routes/appointmentRoutes.js'
+import slotRoutes from './routes/slotRoutes.js'
 import cors from 'cors';
 import swaggerUI from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
-import authRoutes from "./routes/authRoutes.js"
 import { rateLimit } from 'express-rate-limit';
-import appointmentRoutes from './routes/appointmentRoutes.js'
-import type { Request, Response } from 'express';
 import { fileURLToPath } from "url";
 import path from "path";
 
@@ -56,6 +57,7 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs));
 
 app.use('/api/users', authRoutes);
 app.use('/api',appointmentRoutes);
+app.use("/api/slots",slotRoutes)
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello World!');
