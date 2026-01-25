@@ -116,9 +116,9 @@ const router = express.Router()
  *         description: Server error
  */
 
-router.get("/appointment", getAppointments)
-router.post("/appointment", createAppointment)
-router.patch("/appointment/:appointmentId", updateAppointment)
-router.delete("/appointment", deleteAppointment)
+router.get("/", getAppointments)
+router.post("/", createAppointment)
+router.patch("/:appointmentId", updateAppointment)
+router.delete("/", deleteAppointment)
 
 export default router;

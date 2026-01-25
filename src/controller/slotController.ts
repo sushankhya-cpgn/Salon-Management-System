@@ -8,7 +8,7 @@ const generateSlots = (start:Date,end:Date,interval:number, bookedTimes:Date[][]
     const booked_slots:String[] = [];
     const current = new Date(start);
     while(current <= end ){
-        if(current.getHours()===12){
+        if(current.getHours()>=12 && current.getHours()<14){
             current.setHours(14,0,0,0)
             continue;
         }
@@ -20,7 +20,7 @@ const generateSlots = (start:Date,end:Date,interval:number, bookedTimes:Date[][]
         const endDate = new Date(range[1]);
         while(currentDate<endDate){
             booked_slots.push(formatTime(currentDate));
-            currentDate.setMinutes(interval+currentDate.getMinutes());
+            currentDate.setMinutes(currentDate.getMinutes() + interval);
         }
        })
 
@@ -38,8 +38,10 @@ export const availableSlots = async(req:Request,res:Response)=>{
         });
         const interval = service?.duration; 
         const today = new Date();
-        const startTime = new Date(today.setHours(9,0,0,0)); 
-        const endTime = new Date(today.setHours(15,0,0,0));
+        const startTime = new Date(today);
+        startTime.setHours(9,0,0,0);
+        const endTime = new Date(today);
+        endTime.setHours(15,0,0,0)
         const slots = generateSlots(startTime,endTime,interval as number, bookedTimes);
         res.status(200).json({message:slots})
 

@@ -10,6 +10,7 @@ import swaggerJsDoc from 'swagger-jsdoc';
 import { rateLimit } from 'express-rate-limit';
 import { fileURLToPath } from "url";
 import path from "path";
+import { authenticateUser } from './middleware/auth.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -56,8 +57,8 @@ const specs = swaggerJsDoc(options);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs));
 
 app.use('/api/users', authRoutes);
-app.use('/api',appointmentRoutes);
-app.use("/api/slots",slotRoutes)
+app.use('/api/appointment',authenticateUser,appointmentRoutes);
+app.use("/api/slots",authenticateUser,slotRoutes)
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello World!');
