@@ -12,7 +12,7 @@ import jwt from "jsonwebtoken"
 export const authorizeUser = (...roles:string[])=>{
     return(req:Request,res:Response,next:NextFunction)=>{
         if(!req.user || !roles.includes(req.user.role)){
-            return res.status(403).json({message:"You donot have permission to access the resource"})
+            return res.status(403).json({message:"You do not have permission to access the resource"})
         }
         next();
     }
