@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres 
+      POSTGRES_PASSWORD: postgres
     volumes:
       - pgdata:/var/lib/postgresql/data
 
@@ -20,6 +20,34 @@ services:
       interval: 5s
       timeout: 2s
       retries: 20
+
+  redis:
+    image: redis:latest
+    container_name: redis_bullmq
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    networks:
+      - prisma-network
+
+  worker:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    command: npx ts-node src/workers/email.worker.ts
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - redis
+      - postgres
+    
+    env_file:
+      - .env
+    networks:
+      - prisma-network
+
 
   server:
     build:
@@ -46,5 +74,6 @@ networks:
     name: prisma-network
 volumes:
   pgdata:
+  redisdata:
 
 

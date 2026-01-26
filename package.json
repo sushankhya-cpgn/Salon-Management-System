@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon --watch src --ext ts,js,json --exec \"tsx src/server.ts\"",
     "db:deploy": "npx prisma migrate dev && npx prisma generate",
-    "db:seed":"npx tsx prisma/seed.ts"
+    "db:seed": "npx tsx prisma/seed.ts"
   },
   "repository": {
     "type": "git",
@@ -25,10 +25,12 @@
     "@prisma/client": "^7.2.0",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
+    "bullmq": "^5.67.1",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "express": "^5.2.1",
     "express-rate-limit": "^8.2.1",
+    "ioredis": "^5.9.2",
     "jsonwebtoken": "^9.0.3",
     "nodemailer": "^7.0.12",
     "pg": "^8.16.3",
