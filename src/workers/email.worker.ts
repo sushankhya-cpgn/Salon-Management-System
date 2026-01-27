@@ -8,7 +8,7 @@ const emailWorker = new Worker(
 
         // Simulate email sending
         await new Promise((resolve)=>setTimeout(resolve,1000));
-        console.log(`Email sent to ${job.data.to}`) 
+        console.log(`Email sent to ${job.data.to}`)    
 
 
     },
@@ -21,4 +21,4 @@ emailWorker.on('completed', job => {
 
 emailWorker.on('failed', (job, err) => {
   console.log(`${job.id} has failed with ${err.message}`);
-});
+}); 

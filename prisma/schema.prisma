@@ -17,6 +17,13 @@ enum Role{
   ADMIN
 }
 
+enum AppointmentStatus {
+  BOOKED
+  CANCELLED
+  COMPLETED
+  NOSHOW
+}
+
 model User {
   id    Int     @id @default(autoincrement())
   email String  @unique
@@ -27,12 +34,27 @@ model User {
   lastLoginAt DateTime?
   role Role @default(USER)
   verificationToken String?
+  sessions UserSessions[]
+}
+
+model UserSessions{
+  id Int @id @default(autoincrement())
+  userId Int
+  refreshTokenHashed String @unique
+  expiresAt DateTime
+  ipAddress String?
+  createdAt DateTime @default(now())
+  lastUsedAt DateTime?
+
+  user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+  @@index([userId])
 }
 
 model Service{
   id Int @id @default(autoincrement())
   name String @unique
   duration Int
+  price Decimal @db.Decimal(10,2)
   appointments Appointment[]
 }
 
@@ -44,5 +66,6 @@ model Appointment{
   endTime DateTime
   serviceId Int
   service Service @relation(fields:[serviceId],references:[id])
+  status AppointmentStatus @default(BOOKED)
   @@unique([serviceId,startTime]) // preventing two appointments at same starttime
 }

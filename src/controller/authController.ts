@@ -77,11 +77,33 @@ export const login = async function (req: Request, res: Response) {
             }
         )
 
+        const refreshToken = jwtGenerator({
+            payload:{id:user.id, email:user.email},
+            secretKey: process.env.REFRESH_TOKEN_SECRET as string,
+            options:{expiresIn:'9d'}
+            
+        })
+
+        
+
+
+
+
         res.status(200).json({ message: "Login Successful", token } );
     }
     catch(error){
         console.error(error);
        res.status(500).json({ message: "Internal Server Error", error: error instanceof Error ? error.message : String(error) });
+
+    }
+}
+
+export const refreshToken = async function(req:Request,res:Response){
+    try{
+        const refreshToken = req.body.refreshToken;
+
+    }
+    catch(error){
 
     }
 }
