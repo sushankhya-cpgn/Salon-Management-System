@@ -1,24 +1,19 @@
 import { Job, Worker } from "bullmq";
 import { redisConnection } from "../config/redis.ts";
+import { sendEmail } from "../utils/sendMail.js";
 const emailWorker = new Worker(
-    "email",
+    "emailQueue",
     async(job:Job)=>{
-        console.log("Processing data",job.id,job.name);
-        console.log("Job data:",job.data);
-
-        // Simulate email sending
-        await new Promise((resolve)=>setTimeout(resolve,1000));
-        console.log(`Email sent to ${job.data.to}`)    
-
-
+       const {email,subject,message,isVerification} = job.data;
+       await sendEmail({email,subject,message,isVerification})
     },
     {connection:redisConnection}
 )
 
-emailWorker.on('completed', job => {
+emailWorker.on('completed', (job:Job) => {
   console.log(`${job.id} has completed!`);
 });
 
-emailWorker.on('failed', (job, err) => {
+emailWorker.on('failed', (job:Job, err:any) => {
   console.log(`${job.id} has failed with ${err.message}`);
 }); 

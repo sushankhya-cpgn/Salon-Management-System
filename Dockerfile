@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # RUN SCRIPT
-CMD ["npm","run","dev"]
+CMD ["/bin/sh","-c","npm run dev && npm run db:dev"]
