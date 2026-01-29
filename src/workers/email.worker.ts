@@ -1,6 +1,6 @@
 import { Job, Worker } from "bullmq";
 import { redisConnection } from "../config/redis.ts";
-import { sendEmail } from "../utils/sendMail.js";
+import { sendEmail } from "../utils/sendMail.ts";
 const emailWorker = new Worker(
     "emailQueue",
     async(job:Job)=>{
@@ -16,4 +16,4 @@ emailWorker.on('completed', (job:Job) => {
 
 emailWorker.on('failed', (job:Job, err:any) => {
   console.log(`${job.id} has failed with ${err.message}`);
-}); 
+});   

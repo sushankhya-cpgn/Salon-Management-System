@@ -1,4 +1,3 @@
-import { Queue } from "bullmq"
 import { emailQueue } from "../queue/email.queue.js"
 
 

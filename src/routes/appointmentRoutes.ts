@@ -1,6 +1,9 @@
-import { createAppointment, deleteAppointment, getAppointments, updateAppointment } from "../controller/appointmentController.js";
 import express from "express"
+import multer from "multer"
+import { bulkAppointment } from "../controller/appointmentController.js";
+import { createAppointment, deleteAppointment, getAppointments, updateAppointment } from "../controller/appointmentController.js";
 const router = express.Router()
+const upload = new multer({dest:"uploads/"})
 
 /**
  * @swagger
@@ -120,5 +123,6 @@ router.get("/", getAppointments)
 router.post("/", createAppointment)
 router.patch("/:appointmentId", updateAppointment)
 router.delete("/", deleteAppointment)
+router.post("/appointment/bulk",upload.single("file"),bulkAppointment)
 
 export default router;

@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto"
 import { sendEmail } from "../utils/sendMail.js";
 import { jwtGenerator } from "../utils/jwtHelper.js";
+import { addEmailJob } from "../jobs/email.job.js";
 
 
 export const register = async function (req: Request, res: Response) {
@@ -36,7 +37,8 @@ export const register = async function (req: Request, res: Response) {
                 
             }
         });
-        sendEmail({email:req.body.email,subject:"Email Verification Link",message:verfication_link,isVerification:true})
+        // sendEmail({email:req.body.email,subject:"Email Verification Link",message:verfication_link,isVerification:true})
+        addEmailJob({email:req.body.email,subject:"Email Verification Link",message:verfication_link,isVerification:true})
 
         res.status(201).json({ message: "User registered successfully", user: { email: newUser.email, name: newUser.name } });
 
