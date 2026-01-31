@@ -2,9 +2,8 @@ import type { Request, Response } from "express";
 import {prisma} from "../lib/prisma.js";
 import bcrypt from "bcryptjs";
 import crypto from "crypto"
-import { sendEmail } from "../utils/sendMail.js";
 import { jwtGenerator, jwtVerify } from "../utils/jwtHelper.js";
-import { addEmailJob } from "../jobs/email.job.js";
+import {  sendVerificationLink } from "../jobs/email.job.js";
 
 
 export const register = async function (req: Request, res: Response) {
@@ -37,8 +36,7 @@ export const register = async function (req: Request, res: Response) {
                 
             }
         });
-        // sendEmail({email:req.body.email,subject:"Email Verification Link",message:verfication_link,isVerification:true})
-        addEmailJob({email:req.body.email,subject:"Email Verification Link",message:verfication_link,isVerification:true})
+        sendVerificationLink({email:req.body.email,subject:"Email Verification Link",message:verfication_link})
 
         res.status(201).json({ message: "User registered successfully", user: { email: newUser.email, name: newUser.name } });
 
@@ -102,6 +100,19 @@ export const login = async function (req: Request, res: Response) {
         console.error(error);
        res.status(500).json({ message: "Internal Server Error", error: error instanceof Error ? error.message : String(error) });
 
+    }
+}
+
+export const logout = async function(req:Request,res:Response){
+    try{
+        await prisma.userSessions.deleteMany({
+            where:{userId:req.user.id}
+        })
+
+    }
+    catch(error){
+        console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
     }
 }
 

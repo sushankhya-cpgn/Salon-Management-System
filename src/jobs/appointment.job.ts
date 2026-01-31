@@ -1,7 +1,7 @@
 import { appointmentQueue } from "../queue/appointment.queue.js";
 
 export const addAppointmentJob = async(data:any)=>{
-    await appointmentQueue.add("appointment-confirmation",data,{
+    await appointmentQueue.add("process-csv",data,{
         attempts:3,
         backoff:{
             type:"exponential",

@@ -3,14 +3,13 @@ import fs from "fs";
 import csv from "csv-parser"
 import { prisma } from "../lib/prisma.js";
 import { addAppointmentJob } from "../jobs/appointment.job.js";
+import { sendConfirmationEmailJob } from "../jobs/email.job.js";
 
 const appointmentWorker = new Worker("appointmentQueue",
     async(job:Job) => {
-        const csv_path = job.data;
 
-        const appointment:any = [];
-
-
+    const csv_path = job.data;
+    const appointment:any = [];
         await new Promise((resolve,reject)=>{
             fs.createReadStream(csv_path).pipe(csv()).on('data',(row:any)=>
             {
@@ -33,11 +32,16 @@ const appointmentWorker = new Worker("appointmentQueue",
         const created = await prisma.appointment.createMany({
             data:appointment
         })
-        // Add appointment to queue
-        //Complete it
-        for(const appi of appointment){
-            await addAppointmentJob(appi)
+        for(const appt of appointment){
+            await sendConfirmationEmailJob({
+                email: appt.email,
+                subject: "Appointment Confirmation",
+                message: `Your appointment is confirmed.`,
+        })
+        }
+        fs.unlinkSync(csv_path); // Delete the file
+        return { processed: appointment.length };
+
         }
 
-    }
 )
