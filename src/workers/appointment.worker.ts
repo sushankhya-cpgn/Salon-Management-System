@@ -12,7 +12,7 @@ const appointmentWorker = new Worker("appointmentQueue",
 
 
         await new Promise((resolve,reject)=>{
-            fs.createReadStream(csv_path).pipe(csv()).on('data',(row)=>
+            fs.createReadStream(csv_path).pipe(csv()).on('data',(row:any)=>
             {
                 const {customerName,email,startTime,endTime,serviceId} = row;
                 if(!customerName || !email || !startTime || !endTime || !serviceId) return;
