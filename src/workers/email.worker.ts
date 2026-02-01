@@ -1,7 +1,7 @@
 import { Job, Worker } from "bullmq";
 import { redisConnection } from "../config/redis.ts";
 import { sendEmail } from "../utils/sendMail.ts";
-import { prisma } from "../lib/prisma.js";
+import { prisma } from "../lib/prisma.ts";
 const emailWorker = new Worker(
     "emailQueue",
     async(job:Job)=>{
