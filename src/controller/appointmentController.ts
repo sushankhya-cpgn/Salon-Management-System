@@ -77,6 +77,7 @@ export const bulkAppointment = async(req:Request,res:Response) => {
             return res.status(400).json({message:"CSV file is required"})
         }
          
+        console.log(req.file.path);
         await addAppointmentJob(req.file.path)
 
         return res.status(200).json({message:"File received and processing in background"});

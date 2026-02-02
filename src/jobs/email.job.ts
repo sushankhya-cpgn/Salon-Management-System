@@ -1,4 +1,4 @@
-import { emailQueue } from "../queue/email.queue.js"
+import { emailQueue } from "../queue/email.queue.ts"
 
 
 export const sendVerificationLink = async (data: {
