@@ -1,9 +1,11 @@
+import dotenv from "dotenv";
+dotenv.config();
 import { Job, Worker } from "bullmq";
 import fs from "fs";
 import csv from "csv-parser"
 import { prisma } from "../lib/prisma.js";
-import { addAppointmentJob } from "../jobs/appointment.job.js";
 import { sendConfirmationEmailJob } from "../jobs/email.job.js";
+import { redisConnection } from "../config/redis.js";
 
 const appointmentWorker = new Worker("appointmentQueue",
     async(job:Job) => {
@@ -44,4 +46,23 @@ const appointmentWorker = new Worker("appointmentQueue",
 
         }
 
-)
+,{connection:redisConnection})
+
+console.log(`Appointment worker started. Redis: ${process.env.REDIS_HOST || '127.0.0.1'}:${process.env.REDIS_PORT || 6379}`);
+
+
+appointmentWorker.on('active', (job:Job) => {
+  console.log(`Processing job ${job.id} - ${job.name}`);
+});
+
+appointmentWorker.on('completed', (job:Job) => {
+  console.log(`${job.id} has completed!`);
+});
+
+appointmentWorker.on('failed', (job:Job, err:any) => {
+  console.log(`${job.id} has failed with ${err.message}`);
+});
+
+appointmentWorker.on('error', (err:any) => {
+  console.error('Email worker error:', err);
+});   

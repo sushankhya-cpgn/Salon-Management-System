@@ -123,6 +123,6 @@ router.get("/", getAppointments)
 router.post("/", createAppointment)
 router.patch("/:appointmentId", updateAppointment)
 router.delete("/", deleteAppointment)
-router.post("/appointment/bulk",upload.single("file"),bulkAppointment)
+router.post("/bulk",upload.single("file"),bulkAppointment)
 
 export default router;

@@ -36,7 +36,7 @@ export const register = async function (req: Request, res: Response) {
                 
             }
         });
-        sendVerificationLink({email:req.body.email,subject:"Email Verification Link",message:verfication_link})
+        await sendVerificationLink({email:req.body.email,subject:"Email Verification Link",message:verfication_link})
 
         res.status(201).json({ message: "User registered successfully", user: { email: newUser.email, name: newUser.name } });
 
@@ -68,7 +68,7 @@ export const login = async function (req: Request, res: Response) {
         if(!isPasswordValid){
             return res.status(400).json({ message: "Invalid Password" });
         }
-
+      
         const token = jwtGenerator(
             {
             payload:{id: user.id, email: user.email }, 
