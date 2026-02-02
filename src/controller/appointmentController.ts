@@ -1,10 +1,9 @@
 import type { Request, Response } from "express";
-import { prisma } from "../lib/prisma.js";
-import { appointmentQueue } from "../queue/appointment.queue.js";
-import { addAppointmentJob } from "../jobs/appointment.job.js";
+import { prisma } from "../lib/prisma.ts";
+import { addAppointmentJob } from "../jobs/appointment.job.ts";
 
 
-const convertToDate = (date: string, startTime: string, duration: number): [startAt: Date, endAt: Date] => {
+export const convertToDate = (date: string, startTime: string, duration: number): [startAt: Date, endAt: Date] => {
 
     const startAt = new Date(`${date}T${startTime}:00`);
     const endAt = new Date(startAt.getTime() + duration * 60000);
