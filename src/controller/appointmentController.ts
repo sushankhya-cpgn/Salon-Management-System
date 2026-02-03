@@ -1,8 +1,9 @@
 import type { Request, Response } from "express";
-import { prisma } from "../lib/prisma.js";
+import { prisma } from "../lib/prisma.ts";
+import { addAppointmentJob } from "../jobs/appointment.job.ts";
 
 
-const convertToDate = (date: string, startTime: string, duration: number): [startAt: Date, endAt: Date] => {
+export const convertToDate = (date: string, startTime: string, duration: number): [startAt: Date, endAt: Date] => {
 
     const startAt = new Date(`${date}T${startTime}:00`);
     const endAt = new Date(startAt.getTime() + duration * 60000);
@@ -66,6 +67,23 @@ export const createAppointment = async (req: Request, res: Response) => {
 
         console.error(error);
         return res.status(500).json({ message: "Something went wrong", error });
+    }
+}
+
+export const bulkAppointment = async(req:Request,res:Response) => {
+    try{
+        if(!req.file){
+            return res.status(400).json({message:"CSV file is required"})
+        }
+         
+        console.log(req.file.path);
+        await addAppointmentJob(req.file.path)
+
+        return res.status(200).json({message:"File received and processing in background"});
+
+    }
+    catch(error){
+        res.status(400).json({message:"Internal Server Error"})
     }
 }
 

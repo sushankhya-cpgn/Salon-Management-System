@@ -2,8 +2,8 @@ import type { Request, Response } from "express";
 import {prisma} from "../lib/prisma.js";
 import bcrypt from "bcryptjs";
 import crypto from "crypto"
-import { sendEmail } from "../utils/sendMail.js";
-import { jwtGenerator } from "../utils/jwtHelper.js";
+import { jwtGenerator, jwtVerify } from "../utils/jwtHelper.js";
+import {  sendVerificationLink } from "../jobs/email.job.js";
 
 
 export const register = async function (req: Request, res: Response) {
@@ -36,7 +36,7 @@ export const register = async function (req: Request, res: Response) {
                 
             }
         });
-        sendEmail({email:req.body.email,subject:"Email Verification Link",message:verfication_link,isVerification:true})
+        await sendVerificationLink({email:req.body.email,subject:"Email Verification Link",message:verfication_link})
 
         res.status(201).json({ message: "User registered successfully", user: { email: newUser.email, name: newUser.name } });
 
@@ -68,7 +68,7 @@ export const login = async function (req: Request, res: Response) {
         if(!isPasswordValid){
             return res.status(400).json({ message: "Invalid Password" });
         }
-
+      
         const token = jwtGenerator(
             {
             payload:{id: user.id, email: user.email }, 
@@ -84,12 +84,17 @@ export const login = async function (req: Request, res: Response) {
             
         })
 
-        
+        await prisma.UserSessions.create({
+            data:{
+                userId:user.id,
+                refreshTokenHashed:refreshToken,
+                expiresAt: new Date(Date.now() + 9 * 24 * 60 * 60 * 1000),
+                ipAddress:req.ip
 
+            }
+        })
 
-
-
-        res.status(200).json({ message: "Login Successful", token } );
+        return res.status(200).json({ message: "Login Successful", data:{token,refreshToken} } );
     }
     catch(error){
         console.error(error);
@@ -98,13 +103,69 @@ export const login = async function (req: Request, res: Response) {
     }
 }
 
-export const refreshToken = async function(req:Request,res:Response){
+export const logout = async function(req:Request,res:Response){
     try{
-        const refreshToken = req.body.refreshToken;
+        await prisma.userSessions.deleteMany({
+            where:{userId:req.user.id}
+        })
 
     }
     catch(error){
+        console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+    }
+}
 
+export const refreshToken = async function(req:Request,res:Response){
+    try{
+        const refreshToken = req.body.refreshToken 
+
+        if(!refreshToken){
+            return res.status(401).json({message:"Refresh Token Missing"});
+        }
+               
+        // jwt
+        const user = jwtVerify({token:refreshToken,secretKey:process.env.REFRESH_TOKEN_SECRET})
+        console.log(user);
+        
+        const session= await prisma.UserSessions.findFirst({
+            where:{
+                userId:user.id,
+                refreshTokenHashed: refreshToken
+
+            }
+        })
+
+        if(!session){
+            return res.status(403).json({message:"Invalid Refresh Token"})
+        }
+       const accessToken =  jwtGenerator(
+            {
+            payload:{id: user.id, email: user.email }, 
+            secretKey:process.env.JWT_SECRET as string, 
+            options:{ expiresIn: '1h' }
+            }
+        )
+
+        const new_refreshToken = jwtGenerator(
+            {
+            payload:{id: user.id, email: user.email }, 
+            secretKey:process.env.REFRESH_TOKEN_SECRET as string, 
+            options:{ expiresIn: '9d' }
+            }
+        )
+
+        await prisma.userSessions.update({
+            where:{id:session.id},
+            data:{
+                refreshTokenHashed:new_refreshToken
+            }
+        })
+        return res.status(200).json({data:{accessToken,refreshToken:new_refreshToken}})
+
+    }
+    catch(error){
+        return res.status(500).json({message:"Something went wrong",error:error})
     }
 }
 

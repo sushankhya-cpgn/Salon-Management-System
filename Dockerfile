@@ -10,6 +10,12 @@ COPY package*.json ./
 #INSTALL ALL DEPENDENCIES
 RUN npm install
 
+# COPY PRISMA FILES BEFORE GENERATE
+COPY prisma ./prisma
+
+# GENERATE CLIENT INSIDE CONTAINER
+RUN npx prisma generate
+
 #COPY PROJECT FILES 
 COPY . .
 
@@ -17,4 +23,4 @@ COPY . .
 EXPOSE 3000
 
 # RUN SCRIPT
-CMD ["npm","run","dev"]
+CMD ["npm", "run", "dev"]

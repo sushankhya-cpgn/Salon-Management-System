@@ -21,7 +21,7 @@ enum AppointmentStatus {
   BOOKED
   CANCELLED
   COMPLETED
-  NOSHOW
+  PENDING
 }
 
 model User {

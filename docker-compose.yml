@@ -35,7 +35,7 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-    command: npx ts-node src/workers/email.worker.ts
+    command: npx ts-node src/workers/index.ts
     volumes:
       - .:/app
       - /app/node_modules
