@@ -8,119 +8,83 @@ import { sendConfirmationEmailJob } from "../jobs/email.job.ts";
 import { redisConnection } from "../config/redis.ts";
 import { convertToDate } from "../controller/appointmentController.ts";
 
+
+
+async function processBatch(batch: any[]) {
+  // insert batch into DB
+  
+  const insertedAppointments = await prisma.$transaction(
+    batch.map((appt) =>
+      prisma.appointment.create({ data: appt })
+    )
+
+  );
+
+  // enqueue email jobs
+  for (const appt of insertedAppointments) {
+      const key = `${appt.serviceId}-${appt.startTime.toISOString()}`;
+    if (appt.email) {
+      await sendConfirmationEmailJob({
+        appointmentId: appt.id,
+        email: appt.email,
+        subject: "Appointment Confirmation",
+        message: `Your appointment (ID: ${appt.id}) is confirmed!`,
+      });
+    }
+  }
+
+  console.log(`Processed batch of ${batch.length} appointments`);
+}
+
 const appointmentWorker = new Worker("appointmentQueue",
-    async (job: Job) => {
+  async (job: Job) => {
 
-        const csv_path = job.data;
-        console.log("Reached here")
-        const appointment: any = [];
-        // await new Promise((resolve, reject) => {
-        //     fs.createReadStream(csv_path).pipe(csv()).on('data', (row: any) => {
-        //         const { customerName, email, startTime, date, serviceId } = row;
-        //         if (!customerName || !email || !startTime || !date || !serviceId) {
-        //             console.warn("Invalid row skipped:", row);
-        //             return;
-        //         }
-        //         const service = await prisma.service.findUnique({
-        //             where:{id:Number(serviceId)}
-        //         })
-        //         const duration = service?.duration as number;
-        //         const [startAt,endAt] = convertToDate(date,startTime,duration);
-        //         console.log(customerName, email, startTime, date, serviceId)
-        //         appointment.push({
-        //             customerName,
-        //             email,
-        //             startTime: startAt,
-        //             endTime: endAt,
-        //             serviceId: serviceId,
-        //             status: "PENDING"
-        //         });
+    const csv_path = job.data;
+    console.log("Reached here")
+    // Read stream
+    const stream = fs.createReadStream(csv_path).pipe(csv());
+    const batch_size = 1000;
+    let batch: any[] = []
 
-        //     }
-        //     ).on("end", resolve).on("error", reject);
-        // })
 
-        await new Promise<void>((resolve, reject) => {
-  const stream = fs.createReadStream(csv_path).pipe(csv());
-
-  stream.on('data', async (row: any) => {
-    stream.pause(); // ⛔ STOP reading new rows
-
-    try {
-      const { customerName, email, startTime, date, serviceId } = row;
-      if (!customerName || !email || !startTime || !date || !serviceId) {
-        console.warn("Invalid row skipped:", row);
-        stream.resume();
-        return;
-      }
-
-      const service = await prisma.service.findUnique({
+    for await (const row of stream) {
+      let { customerName, email, date, startTime, serviceId } = row;
+      const service = await prisma.service.findFirst({
         where: { id: Number(serviceId) }
       });
+      if (!service) continue;
+      const [startAt, endAt] = convertToDate(date, startTime, service?.duration as number)
+      serviceId = Number(serviceId);
+      batch.push({ customerName, email, startTime: startAt, serviceId, endTime: endAt });
 
-      if (!service) {
-        console.warn("Service not found:", serviceId);
-        stream.resume();
-        return;
+      if (batch.length === batch_size) {
+        await processBatch(batch);
+        batch = [];
       }
-
-      const duration = service.duration;
-      const [startAt, endAt] = convertToDate(date, startTime, duration);
-
-      appointment.push({
-        customerName,
-        email,
-        startTime: startAt,
-        endTime: endAt,
-        serviceId: Number(serviceId),
-        status: "PENDING"
-      });
-
-      stream.resume(); // ▶ continue reading
-
-    } catch (err) {
-      stream.resume();
-      reject(err);
-    }
-  });
-
-  stream.on('end', resolve);
-  stream.on('error', reject);
-});
-
-
-        const created = await prisma.appointment.createMany({
-            data: appointment
-        })
-        for (const appt of appointment) {
-            await sendConfirmationEmailJob({
-                email: appt.email,
-                subject: "Appointment Confirmation",
-                message: `Your appointment is confirmed.`,
-            })
-        }
-        fs.unlinkSync(csv_path); // Delete the file
-        return { processed: appointment.length };
-
+      console.log("Appointment CSV processing complete!");
     }
 
-    , { connection: redisConnection })
+    if (batch.length) {
+      await processBatch(batch);
+    }
+  }
+  , { connection: redisConnection })
 
 console.log(`Appointment worker started. Redis: ${process.env.REDIS_HOST || '127.0.0.1'}:${process.env.REDIS_PORT || 6379}`);
 
 
 appointmentWorker.on('active', (job: Job) => {
-    console.log(`Processing job ${job.id} - ${job.name}`);
+  console.log(`Processing job ${job.id} - ${job.name}`);
 });
 
 appointmentWorker.on('completed', (job: Job) => {
-    console.log(`${job.id} has completed!`);
+  console.log(`${job.id} has completed!`);
 });
 
 appointmentWorker.on('failed', (job: Job, err: any) => {
-    console.log(`${job.id} has failed with ${err.message}`);
+  console.log(`${job.id} has failed with ${err.message}`);
 });
 
 appointmentWorker.on('error', (err: any) => {
-    console.error('Email worker error:', err);
+  console.error('Email worker error:', err);
 });   

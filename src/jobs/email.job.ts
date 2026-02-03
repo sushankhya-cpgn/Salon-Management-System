@@ -19,7 +19,8 @@ export const sendVerificationLink = async (data: {
 export const sendConfirmationEmailJob = async(data:{
     email:string,
     subject: string,
-    message:string
+    message:string,
+    appointmentId:number
 })=>{
     console.log(`Enqueuing 'send-confirmation' job for ${data.email}`);
     await emailQueue.add('send-confirmation',data,{

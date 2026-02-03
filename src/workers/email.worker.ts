@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 dotenv.config();
-
 import { Job, Worker } from "bullmq";
 import { redisConnection } from "../config/redis.ts";
 import { sendEmail } from "../utils/sendMail.ts";
