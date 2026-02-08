@@ -11,10 +11,30 @@ import { convertToDate } from "../controller/appointmentController.ts";
 
 
 async function processBatch(batch: any[]) {
-  // insert batch into DB
+  // Check for conflicts before insertion
+  const validAppointments = [];
   
+  for (const appt of batch) {
+    const conflict = await prisma.appointment.findFirst({
+      where: {
+        serviceId: appt.serviceId,
+        startTime: { lt: appt.endTime },
+        endTime: { gt: appt.startTime }
+      }
+    });
+    
+    if (!conflict) {
+      validAppointments.push(appt);
+    } else {
+      console.log(`Skipping appointment for ${appt.customerName}: Slot already booked`);
+    }
+  }
+
+  if (validAppointments.length === 0) return;
+
+  // Insert only valid appointments
   const insertedAppointments = await prisma.$transaction(
-    batch.map((appt) =>
+    validAppointments.map((appt) =>
       prisma.appointment.create({ data: appt })
     )
 
@@ -33,7 +53,7 @@ async function processBatch(batch: any[]) {
     }
   }
 
-  console.log(`Processed batch of ${batch.length} appointments`);
+  console.log(`Processed batch of ${validAppointments.length} valid appointments out of ${batch.length}`);
 }
 
 const appointmentWorker = new Worker("appointmentQueue",
@@ -55,6 +75,7 @@ const appointmentWorker = new Worker("appointmentQueue",
       if (!service) continue;
       const [startAt, endAt] = convertToDate(date, startTime, service?.duration as number)
       serviceId = Number(serviceId);
+      
       batch.push({ customerName, email, startTime: startAt, serviceId, endTime: endAt });
 
       if (batch.length === batch_size) {

@@ -11,6 +11,8 @@ import { rateLimit } from 'express-rate-limit';
 import { fileURLToPath } from "url";
 import path from "path";
 import { authenticateUser } from './middleware/auth.js';
+import morganMiddleware from './middleware/morganMiddleware.js';
+import { requestLoggingMiddleware, errorLoggingMiddleware } from './middleware/loggingMiddleware.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,6 +21,10 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(cors());  
 app.use(express.json());
+
+// Logging middleware
+app.use(morganMiddleware);
+app.use(requestLoggingMiddleware);
 
 
 // Rate Limiter Middleware
@@ -38,18 +44,35 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Express API Documentation with Swagger',
+      title: 'Salon Management System API',
       version: '1.0.0',
-      description: 'Salon Management System API documentation',
+      description: 'Comprehensive API documentation for the Salon Management System. This API handles user authentication, appointment management, and available slot queries.',
+      license: {
+        name: 'MIT',
+      },
     },
     servers: [
       {
         url: 'http://localhost:3000',
         description: 'Development server',
       },
+      {
+        url: 'https://api.salon.example.com',
+        description: 'Production server',
+      },
     ],
+    components: {
+      securitySchemes: {
+        BearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'JWT Bearer token for authenticated endpoints',
+        },
+      },
+    },
   },
-  apis: [path.join(__dirname, './routes/*.{ts,js}')], // Path to the API routes files
+  apis: [path.join(__dirname, './routes/*.{ts,js}')],
 };
 
 const specs = swaggerJsDoc(options);
@@ -64,6 +87,7 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Hello World!');
 });
 
-
+// Error logging middleware (must be at the end)
+app.use(errorLoggingMiddleware);
 
 export default app;
