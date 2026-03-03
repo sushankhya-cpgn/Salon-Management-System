@@ -4,7 +4,7 @@ import * as React from "react"
 
 
 
-export default function Home() {
+export default function DashBoard() {
 
    return (
     <div className=" w-full border rounded-2xl p-4 flex justify-between items-center">

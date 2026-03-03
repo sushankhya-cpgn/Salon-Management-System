@@ -36,7 +36,7 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange>
-            <SidebarProvider>
+            {/* <SidebarProvider>
                <div className="flex min-h-screen w-full">
               <AppSidebar />
              <main className="flex-1 p-6">
@@ -46,7 +46,8 @@ export default function RootLayout({
           </div>
         </main>
           </div>
-            </SidebarProvider>
+            </SidebarProvider> */}
+            {children}
           </ThemeProvider>
       </body>
     </html>
