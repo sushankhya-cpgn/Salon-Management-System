@@ -4,3 +4,5 @@ dist/
 /generated/prisma
 uploads/
 src/logs/
+Frontend/myapp/node_modules/
+
