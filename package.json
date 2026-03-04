@@ -21,8 +21,10 @@
   },
   "homepage": "https://github.com/sushankhya-cpgn/Salon-Management-System#readme",
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
     "@prisma/adapter-pg": "^7.2.0",
     "@prisma/client": "^7.2.0",
+    "axios": "^1.13.6",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
     "bullmq": "^5.67.2",
@@ -37,10 +39,12 @@
     "multer": "^2.0.2",
     "nodemailer": "^7.0.12",
     "pg": "^8.16.3",
+    "react-hook-form": "^7.71.2",
     "socket.io": "^4.8.3",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
-    "winston": "^3.19.0"
+    "winston": "^3.19.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
