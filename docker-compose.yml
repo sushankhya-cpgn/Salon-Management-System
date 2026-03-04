@@ -54,7 +54,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000" #API
+      - "4000:4000" #API
       - "5555:5555" #Prisma Studio
     volumes:
       - .:/app

@@ -2,11 +2,15 @@
 
 import { LoginForm } from "@/components/login-form";
 import { AuthCard } from "@/components/auth-card";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Login() {
-  return(
+  const { login, error, loading } = useAuth();
+
+  return (
     <AuthCard title="Welcome" subtitle="Login To Continue">
-        <LoginForm/>
+      {error && <div className="text-red-600 text-sm mb-4">{error}</div>}
+      <LoginForm onSubmit={login} />
     </AuthCard>
   );
 }

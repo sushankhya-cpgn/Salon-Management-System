@@ -7,11 +7,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterInput, registerSchema } from "@/lib/validations/authSchema";
 
-export function RegisterForm() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+export function RegisterForm({onSubmit,loading}:any) {
+ 
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
@@ -26,13 +23,10 @@ export function RegisterForm() {
     },
   });
 
-  const onSubmit = (data: RegisterInput) => {
-    console.log(data); // Data is validated and type-safe here
-  };
 
   return (
     <form
-      className="mt-8 space-y-5 overflow-y-scroll"
+      className="mt-8 space-y-5 "
       onSubmit={handleSubmit(onSubmit)}
     >
       <div>
@@ -41,9 +35,7 @@ export function RegisterForm() {
           type="text"
           placeholder="Enter your name"
           className="mt-1"
-          value={name}
           {...register("name")}
-          onChange={(e) => setName(e.target.value)}
         />
       </div>
       <p className=" text-sm text-red-500">{errors.name?.message}</p>
@@ -53,9 +45,7 @@ export function RegisterForm() {
           type="email"
           placeholder="Enter your email"
           className="mt-1"
-          value={email}
           {...register("email")}
-          onChange={(e) => setEmail(e.target.value)}
         />
       </div>
       <p className=" text-sm text-red-500">{errors.email?.message}</p>
@@ -67,9 +57,7 @@ export function RegisterForm() {
             type={!showPassword ? "password" : "text"}
             placeholder="Enter your password"
             className="mt-1"
-            value={password}
             {...register("password")}
-            onChange={(e) => setPassword(e.target.value)}
           />
           <div
             className="flex justify-center items-center px-2 absolute right-0 h-full cursor-pointer"
@@ -88,21 +76,19 @@ export function RegisterForm() {
           type={!showPassword ? "password" : "text"}
           placeholder="Enter your password"
           className="mt-1"
-          value={confirmPassword}
           {...register("confirmPassword")}
-          onChange={(e) => setConfirmPassword(e.target.value)}
         />
       </div>
       <p className=" text-sm text-red-500">{errors.confirmPassword?.message}</p>
 
       <Button type="submit" className="w-full mt-4" size="lg">
-        Register
+        {!loading?"Register":"Creating Account..."}
       </Button>
 
       <p className="text-sm text-center text-gray-500 mt-4">
         Already have an account?{" "}
         <Link href="/login" className=" text-blue-700">
-          Login
+        Login
         </Link>
       </p>
     </form>

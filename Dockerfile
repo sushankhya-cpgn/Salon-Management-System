@@ -20,7 +20,7 @@ RUN npx prisma generate
 COPY . .
 
 #EXPOSE PORT
-EXPOSE 3000
+EXPOSE 4000
 
 # RUN SCRIPT
 CMD ["npm", "run", "dev"]
