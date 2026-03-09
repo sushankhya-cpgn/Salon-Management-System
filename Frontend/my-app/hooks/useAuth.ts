@@ -42,5 +42,18 @@ export function useAuth() {
     }
   }
 
-  return { login, register ,error, loading, message };
+  const logout = async()=>{
+    try{
+      setError(null);
+      setLoading(true);
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      router.push('/login');
+    }
+    catch(error){
+      console.error("Logout failed:", error);
+    }
+  }
+
+  return { login, logout, register, error, loading, message };
 }

@@ -71,7 +71,7 @@ export const login = async function (req: Request, res: Response) {
       
         const token = jwtGenerator(
             {
-            payload:{id: user.id, email: user.email }, 
+            payload:{id: user.id, email: user.email, role: user.role }, 
             secretKey:process.env.JWT_SECRET as string, 
             options:{ expiresIn: '1h' }
             }
@@ -94,7 +94,8 @@ export const login = async function (req: Request, res: Response) {
             }
         })
 
-        return res.status(200).json({ message: "Login Successful", data:{token,refreshToken} } );
+        const {password, verificationToken ,...userWithoutPassword} = user;
+        return res.status(200).json({ message: "Login Successful", data:{token,refreshToken,user:userWithoutPassword} } );
     }
     catch(error){
         console.error(error);
@@ -112,7 +113,7 @@ export const logout = async function(req:Request,res:Response){
     }
     catch(error){
         console.error(error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ message: "Internal Server Error", error: error instanceof Error ? error.message : String(error) });
     }
 }
 
@@ -130,7 +131,7 @@ export const refreshToken = async function(req:Request,res:Response){
         
         const session= await prisma.UserSessions.findFirst({
             where:{
-                userId:user.id,
+                userId:user?.id,
                 refreshTokenHashed: refreshToken
 
             }
