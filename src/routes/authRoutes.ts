@@ -6,7 +6,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/users/register:
+ * /api/auth/register:
  *   post:
  *     tags:
  *       - Authentication
@@ -59,7 +59,7 @@ router.post("/register", register);
 
 /**
  * @swagger
- * /api/users/login:
+ * /api/auth/login:
  *   post:
  *     tags:
  *       - Authentication
@@ -112,7 +112,7 @@ router.post("/login", login);
 
 /**
  * @swagger
- * /api/users/refresh-token:
+ * /api/auth/refresh-token:
  *   post:
  *     tags:
  *       - Authentication
@@ -153,7 +153,7 @@ router.post("/refresh-token", refreshToken);
 
 /**
  * @swagger
- * /api/users/verify-email:
+ * /api/auth/verify-email:
  *   get:
  *     tags:
  *       - Authentication
@@ -178,7 +178,7 @@ router.get("/verify-email", verifyEmail);
 
 /**
  * @swagger
- * /api/users/logout:
+ * /api/auth/logout:
  *   post:
  *     tags:
  *       - Authentication
@@ -195,5 +195,6 @@ router.get("/verify-email", verifyEmail);
  *         description: Internal server error
  */
 router.post("/logout", logout);
+
 
 export default router;

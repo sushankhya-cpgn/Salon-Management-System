@@ -18,17 +18,18 @@ export type RegisterResponse = {
 }
 
 export const login = async (credentials: LoginInput): Promise<LoginResponse> => {
-  const res = await apiClient.post<LoginResponse>('/api/users/login', credentials);
+  const res = await apiClient.post<LoginResponse>('/api/auth/login', credentials);
   return res.data;
 };
 
 export const register = async(credentials: RegisterInput): Promise<RegisterResponse> => {
-  const res = await apiClient.post<RegisterResponse>('/api/users/register', {name:credentials.name,email:credentials.email,password:credentials.password});
+  const res = await apiClient.post<RegisterResponse>('/api/auth/register', {name:credentials.name,email:credentials.email,password:credentials.password});
   return res.data;
 }
 
 export const logout = async () => {
-  await apiClient.post('/api/users/logout');
+  await apiClient.post('/api/auth/logout');
+
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
 };
