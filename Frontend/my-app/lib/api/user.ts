@@ -10,5 +10,5 @@ export const getUser = async (userId: number) => {
     const res = await apiClient.get('/api/user/users', {
         params: { userId }
     });
-    return res.data.data;
+    return res.data.data[0];
 }
