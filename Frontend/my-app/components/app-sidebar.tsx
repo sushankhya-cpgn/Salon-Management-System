@@ -14,6 +14,89 @@ import {
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { BarChart3, Calendar, ChevronDown, CreditCard, LayoutDashboard, Package, Plus, Scissors, Settings, User2, UserCog, Users } from "lucide-react"
 import { Collapsible } from "radix-ui"
+import Link from "next/link"
+
+
+export const sideBarItems = [
+    {
+        label: "Main",
+        items: [
+            {
+                title: "Dashboard",
+                icon: <LayoutDashboard />,
+                href: "/dashboard"
+            },
+            {
+                title: "Appointments",
+                icon: <Calendar />,
+                href: "/appointments"
+            },
+            {
+                title: "Customers",
+                icon: <Users />,
+                href: "/customers"
+            }
+        ]
+    },
+    {
+        label: "Management",
+        items: [
+            {
+                title: "Services",
+                icon: <Scissors />,
+                href: "/services"
+            },
+            {
+                title: "Staff",
+                icon: <UserCog />,
+                href: "/staff"
+            },
+            {
+                title: "Inventory",
+                icon: <Package />,
+                href: "/inventory"
+            }
+        ]
+    },
+    {
+        label: "Finance",
+        items: [
+            {
+                title: "Billing",
+                icon: <CreditCard />,
+                href: "/billing"
+            }   
+        ]
+    },
+    {
+        label: "Settings",
+        items: [
+            {
+                title: "Profile",
+                icon: <User2 />,
+                href: "/profile"
+            },
+            {
+                title: "Preferences",
+                icon: <Settings />,
+                href: "/preferences"
+            }
+        ]
+    },
+
+    {
+        label: "Analytics",
+        items: [
+            {
+                title: "Reports",
+                icon: <BarChart3 />,
+                href: "/reports"
+            }
+        ]
+    }
+
+
+]
 
 export function AppSidebar() {
     return (
@@ -37,113 +120,31 @@ export function AppSidebar() {
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
-            <SidebarGroup>
-                <SidebarGroupLabel>Main</SidebarGroupLabel>
-                <SidebarGroupContent>
-                    <SidebarMenu>
 
-                        <SidebarMenuItem>
-                            <SidebarMenuButton>
-                                <LayoutDashboard />
-                                Dashboard
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
-
-                        <SidebarMenuItem>
-                            <SidebarMenuButton>
-                                <Calendar />
-                                Appointments
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
-
-                        <SidebarMenuItem>
-                            <SidebarMenuButton>
-                                <Users />
-                                Customers
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
-
-                    </SidebarMenu>
-                </SidebarGroupContent>
-            </SidebarGroup>
-
-            <SidebarGroup>
-                <SidebarGroupLabel>Management</SidebarGroupLabel>
-                <SidebarGroupContent>
-                    <SidebarMenu>
-
-                        <SidebarMenuItem>
-                            <SidebarMenuButton>
-                                <Scissors />
-                                Services
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
-
-                        <SidebarMenuItem>
-                            <SidebarMenuButton>
-                                <UserCog />
-                                Staff
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
-
-                        <SidebarMenuItem>
-                            <SidebarMenuButton>
-                                <Package />
-                                Inventory
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
-
-                    </SidebarMenu>
-                </SidebarGroupContent>
-            </SidebarGroup>
-
-            <SidebarGroup>
-                <SidebarGroupLabel>Finance</SidebarGroupLabel>
-                <SidebarGroupContent>
-                    <SidebarMenu>
-
-                        <SidebarMenuItem>
-                            <SidebarMenuButton>
-                                <CreditCard />
-                                Billing
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
-
-                    </SidebarMenu>
-                </SidebarGroupContent>
-            </SidebarGroup>
-
-            <SidebarGroup>
-                <SidebarGroupLabel>Analytics</SidebarGroupLabel>
-                <SidebarGroupContent>
-                    <SidebarMenu>
-
-                        <SidebarMenuItem>
-                            <SidebarMenuButton>
-                                <BarChart3 />
-                                Reports
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
-
-                    </SidebarMenu>
-                </SidebarGroupContent>
-            </SidebarGroup>
-
-            <SidebarGroup>
-                <SidebarGroupLabel>System</SidebarGroupLabel>
-                <SidebarGroupContent>
-                    <SidebarMenu>
-
-                        <SidebarMenuItem>
-                            <SidebarMenuButton>
-                                <Settings />
-                                Settings
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
-
-                    </SidebarMenu>
-                </SidebarGroupContent>
-            </SidebarGroup>
+            {sideBarItems.map((group)=>{
+                return(
+                    <SidebarGroup key={group.label}>
+                        <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+                        <SidebarGroupContent>
+                            <SidebarMenu>
+                                {group.items.map((item)=>{
+                                    return(
+                                        <SidebarMenuItem key={item.title}>
+                                            <Link href={item.href} className="w-full">
+                                                <SidebarMenuButton className="cursor-pointer">
+                                                    {item.icon}
+                                                    {item.title}
+                                                </SidebarMenuButton>
+                                            </Link>
+                                        </SidebarMenuItem>
+                                    )
+                                })}
+                            </SidebarMenu>
+                            </SidebarGroupContent>
+                    </SidebarGroup>
+                )
+            })}
+       
             <SidebarFooter>
                 <SidebarMenu>
                     <SidebarMenuItem>

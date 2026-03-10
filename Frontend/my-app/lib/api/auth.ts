@@ -6,6 +6,11 @@ export type LoginResponse = {
   data: {
     token: string;
     refreshToken: string;
+    user: {
+      id: number;
+      email: string;
+      name: string;
+    };
   };
 };
 
@@ -19,6 +24,7 @@ export type RegisterResponse = {
 
 export const login = async (credentials: LoginInput): Promise<LoginResponse> => {
   const res = await apiClient.post<LoginResponse>('/api/auth/login', credentials);
+  
   return res.data;
 };
 

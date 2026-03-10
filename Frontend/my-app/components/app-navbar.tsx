@@ -1,3 +1,4 @@
+"use client"
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -8,19 +9,29 @@ import {
 } from "@/components/ui/navigation-menu"
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
-import {  Moon, Sun, User } from "lucide-react"
+import { Moon, Sun, User } from "lucide-react"
 import Link from "next/link";
 import { logout } from "@/lib/api/auth";
-
+import { useSelector } from "react-redux"
  
+
+
 
 export default function AppNavbar() {
   const { theme, setTheme } = useTheme();
-  
+  const user = useSelector((state:any) => state.user);
+
+  const sayHi = ()=>{
+    console.log(user)
+  }
 
   return (
-    <NavigationMenu>
+    <div className=" w-full flex justify-between items-center gap-4">
+        <h1 className="text-2xl font-bold">Saloon Management System</h1>
+    <NavigationMenu className="w-full">
       <NavigationMenuList>
+        <div className=" flex gap-4">
+                   <p className=" text-2xl " onMouseEnter={sayHi}> Hi, {user && <span>{user.name || user.email || "ss"}</span>}</p>
 
         {/* Theme Toggle */}
         <Button
@@ -30,11 +41,13 @@ export default function AppNavbar() {
         >
           {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
         </Button>
-
         {/* User Menu */}
         <NavigationMenuItem>
           <NavigationMenuTrigger>
-            <User className="cursor-pointer" />
+            <div className="flex items-center gap-2">
+              <User className="cursor-pointer" />
+            
+            </div>
           </NavigationMenuTrigger>
 
           <NavigationMenuContent>
@@ -61,7 +74,9 @@ export default function AppNavbar() {
 
         </NavigationMenuItem>
 
+      </div>
       </NavigationMenuList>
     </NavigationMenu>
+    </div>
   )
 }

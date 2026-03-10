@@ -4,6 +4,7 @@ import type { Request, Response } from 'express';
 import authRoutes from "./routes/authRoutes.js"
 import appointmentRoutes from './routes/appointmentRoutes.js'
 import slotRoutes from './routes/slotRoutes.js'
+import userRoutes from './routes/userRoutes.js'
 import cors from 'cors';
 import swaggerUI from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
@@ -13,7 +14,6 @@ import path from "path";
 import { authenticateUser } from './middleware/auth.js';
 import morganMiddleware from './middleware/morganMiddleware.js';
 import { requestLoggingMiddleware, errorLoggingMiddleware } from './middleware/loggingMiddleware.js';
-import { use } from 'react';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -81,11 +81,12 @@ const specs = swaggerJsDoc(options);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs));
 
 app.use('/api/auth', authRoutes);
-// app.use('/api/user',userRoutes);
+app.use('/api/user',userRoutes);
 app.use('/api/appointment',authenticateUser,appointmentRoutes);
 app.use("/api/slots",authenticateUser,slotRoutes)
 
 app.get('/', (req: Request, res: Response) => {
+  console.log('Received request for root endpoint');
   res.send('Hello World!');
 });
 
