@@ -10,8 +10,9 @@ export interface UserState {
 }
 
 export const fetchUser = createAsyncThunk('user/fetchUser', async (userId:number) => {
-    const res = await getUser(userId);
-    return res.data.data;
+    const res = await getUser(Number(userId));
+    console.log(res )
+    return res;
 })
 
 

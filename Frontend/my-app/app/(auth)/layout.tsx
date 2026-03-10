@@ -1,3 +1,4 @@
+import { ThemeProvider } from "@/components/theme-provider";
 import Image from "next/image";
 
 export default function AuthLayout({
@@ -9,8 +10,9 @@ export default function AuthLayout({
   subtitle:string
 }) {
   return (
-    <div className=" min-h-screen w-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-3/4  h-[700px] bg-white rounded-2xl shadow-xl overflow-hidden grid md:grid-cols-2">
+    // <ThemeProvider>
+    <div className=" min-h-screen w-screen flex items-center justify-center px-4">
+      <div className="w-3/4  h-[700px]  rounded-2xl shadow-xl overflow-hidden grid md:grid-cols-2">
         {/* Left Image Section */}
         <div className="hidden md:block relative">
           <Image
@@ -26,5 +28,6 @@ export default function AuthLayout({
         {children}
       </div>
     </div>
+    // </ThemeProvider>
   );
 }

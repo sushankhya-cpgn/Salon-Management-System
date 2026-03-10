@@ -3,12 +3,14 @@ import { useRouter } from "next/navigation";
 import { login as loginApi } from "@/lib/api/auth";
 import { register as registerApi } from "@/lib/api/auth";
 import { LoginInput, RegisterInput } from "@/lib/validations/authSchema";
+import { useDispatch } from "react-redux";
 
 export function useAuth() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [message,setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const login = async (data: LoginInput) => {
     setError(null);
@@ -17,6 +19,7 @@ export function useAuth() {
       const result = await loginApi(data);
       localStorage.setItem('accessToken', result.data.token);
       localStorage.setItem('refreshToken', result.data.refreshToken);
+      localStorage.setItem('user', JSON.stringify(result.data.user));
       router.push('/dashboard');
     } catch (err: any) {
       setError(err?.response?.data?.message || err.message || 'Login failed');
