@@ -1,6 +1,4 @@
 "use client";
-
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,8 +15,7 @@ import { Controller, useForm } from "react-hook-form";
 import { AppointmentInput, appointmentSchema } from "@/lib/validations/schemas/appointmentSchema";
 
 import useService from "@/hooks/use-service";
-
-
+import { createAppointment } from "@/lib/api/appointment";
 
 
 export default function AppointmentForm() {
@@ -44,8 +41,20 @@ export default function AppointmentForm() {
         },
     });
 
-    const onSubmit = (data: any) => {
-        console.log(`Data submitted ${JSON.stringify(data)}`);
+    const onSubmit = async(data: any) => {
+
+        try{
+
+            console.log(`Data submitted ${JSON.stringify(data)}`);
+            const res = await createAppointment(data)
+            
+        }
+        
+        catch(error){
+             console.log(error);
+
+        }
+        
     }
 
     return (
@@ -104,7 +113,7 @@ export default function AppointmentForm() {
                                                 </SelectTrigger>
 
                                                 <SelectContent>
-                                                    {services.map((service) => (
+                                                    {services.map((service:any) => (
                                                         <SelectItem key={service.id} value={String(service.id)}>
                                                             {service.name} - ${service.price} ({service.duration} min)
                                                         </SelectItem>
@@ -134,7 +143,7 @@ export default function AppointmentForm() {
                             </div>
                         </div>
                         <div className=" w-full flex items-center justify-center">
-                            <Button className="w-xl mx-auto">Book Appointment</Button>
+                            <Button disabled={isSubmitting} className="w-xl mx-auto">Book Appointment</Button>
                         </div>
                     </form>
                 </CardContent>
