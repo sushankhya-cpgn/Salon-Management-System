@@ -1,5 +1,5 @@
 import { apiClient } from "./axios";
-import { LoginInput, RegisterInput } from "../validations/authSchema";
+import { LoginInput, RegisterInput } from "../validations/schemas/authSchema";
 
 export type LoginResponse = {
   message: string;

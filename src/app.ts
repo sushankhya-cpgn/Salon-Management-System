@@ -4,6 +4,7 @@ import type { Request, Response } from 'express';
 import authRoutes from "./routes/authRoutes.js"
 import appointmentRoutes from './routes/appointmentRoutes.js'
 import slotRoutes from './routes/slotRoutes.js'
+import serviceRoutes from "./routes/serviceRoutes.js"
 import userRoutes from './routes/userRoutes.js'
 import cors from 'cors';
 import swaggerUI from 'swagger-ui-express';
@@ -84,6 +85,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user',userRoutes);
 app.use('/api/appointment',authenticateUser,appointmentRoutes);
 app.use("/api/slots",authenticateUser,slotRoutes)
+app.use("/api/services",serviceRoutes)
 
 app.get('/', (req: Request, res: Response) => {
   console.log('Received request for root endpoint');

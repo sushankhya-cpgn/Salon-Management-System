@@ -3,8 +3,6 @@
 import { AuthCard } from "@/components/auth-card";
 import { RegisterForm } from "@/components/register-form";
 import { useAuth } from "@/hooks/useAuth";
-import { register as registerApi } from "@/lib/api/auth";
-import { RegisterInput } from "@/lib/validations/authSchema";
 
 
 export default function Register() {

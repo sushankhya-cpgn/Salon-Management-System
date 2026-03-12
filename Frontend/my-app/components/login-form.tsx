@@ -4,7 +4,7 @@ import { Input } from "./ui/input";
 import Link from "next/link";
 import { Eye, EyeClosed } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { loginSchema, type LoginInput } from "../lib/validations/authSchema";
+import { loginSchema, type LoginInput } from "../lib/validations/schemas/authSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 interface LoginFormProps {
@@ -68,7 +68,7 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
       </Button>
 
       <p className="text-sm text-center text-gray-500 mt-4">
-        Don't have an account?{" "}
+        Don&apos;t have an account?{" "}
         <Link href="/register" className=" text-blue-700">
           Register
         </Link>

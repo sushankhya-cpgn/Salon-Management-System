@@ -8,6 +8,17 @@ import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import { fetchUser } from "../features/user/userSlice";
 import { useDispatch } from "react-redux";
+import Link from "next/link"
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import { Card } from "@/components/ui/card";
+
 
 
 export default function PublicLayout({
@@ -34,6 +45,26 @@ export default function PublicLayout({
         }
     }, [router, dispatch]);
 
+    function BreadcrumbLinkDemo() {
+        return (
+            <Breadcrumb>
+                <BreadcrumbList>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink asChild>
+                            <Link href="/">Home</Link>
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                        <BreadcrumbLink asChild>
+                            <Link href="/components">Components</Link>
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+
+                </BreadcrumbList>
+            </Breadcrumb>
+        )
+    }
     if (isLoading) {
         return <div className="flex h-screen w-screen items-center justify-center min-h-screen text-4xl"><LoaderCircle className="animate-spin text-primary " /></div>;
     }
@@ -55,9 +86,14 @@ export default function PublicLayout({
                 </div>
 
                 {/* Content */}
-                <main className="flex-1 border rounded-2xl p-4">
+                <main className="flex-1 border rounded-2xl p-6 bg-muted">
+                    <div className=" mt-2 mb-2">
+                        <BreadcrumbLinkDemo />
+                    </div>
                     {children}
                 </main>
+
+              
 
             </div>
         </div>

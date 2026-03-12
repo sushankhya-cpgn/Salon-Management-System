@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { login as loginApi } from "@/lib/api/auth";
 import { register as registerApi } from "@/lib/api/auth";
-import { LoginInput, RegisterInput } from "@/lib/validations/authSchema";
+import { LoginInput, RegisterInput } from "@/lib/validations/schemas/authSchema";
 import { useDispatch } from "react-redux";
 
 export function useAuth() {
@@ -10,7 +10,6 @@ export function useAuth() {
   const [error, setError] = useState<string | null>(null);
   const [message,setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch();
 
   const login = async (data: LoginInput) => {
     setError(null);
@@ -34,6 +33,7 @@ export function useAuth() {
     try{
         const result = await registerApi(data);
         setMessage(result.message)
+
     }
     catch(err:any){
          setError(err?.response?.data?.message || err.message || 'Login failed');

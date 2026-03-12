@@ -5,7 +5,7 @@ import { AuthCard } from "@/components/auth-card";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function Login() {
-  const { login, error, loading } = useAuth();
+  const { login, error } = useAuth();
 
   return (
     <AuthCard title="Welcome" subtitle="Login To Continue">
