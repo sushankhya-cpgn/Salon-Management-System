@@ -1,7 +1,5 @@
 "use client"
-import AppNavbar from "@/components/app-navbar"
-import { AppSidebar } from "@/components/app-sidebar"
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+
 
 
 

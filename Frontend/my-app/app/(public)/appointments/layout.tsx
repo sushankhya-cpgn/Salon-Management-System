@@ -1,6 +1,7 @@
 "use client"
 
 
+
 export default function AppointmentsLayout({
     children
 }:{children: React.ReactNode}){
@@ -8,9 +9,13 @@ export default function AppointmentsLayout({
     return(
         
       <>
+      {/* <h1>Book Appointment</h1> */}
       {children}
+     
       </>
        
     );
     
 }
+
+
